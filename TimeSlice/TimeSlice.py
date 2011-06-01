@@ -28,16 +28,19 @@ DAYLY = 1
 MONTHLY = 2
 YEARLY = 3
 
+class TimeSliceException(Exception):
+    pass
+
 class TimeSlice:
     start = None
     end = None
 
     def __init__( self, start = None, end = None ):
         if not ( isinstance( start, datetime.date ) ):
-            raise 'start argument must be instance of datetime.datetime or datetime.date'
+            raise TimeSliceException('start argument must be instance of datetime.datetime or datetime.date')
 
         if not ( isinstance( end, datetime.date ) ):
-            raise 'end argument must be instance of datetime.datetime or datetime.date'
+            raise TimeSliceException('end argument must be instance of datetime.datetime or datetime.date')
 
         if not ( isinstance( start, datetime.datetime ) ):
             start = datetime.datetime( start.year, start.month, start.day )
@@ -47,7 +50,7 @@ class TimeSlice:
 
 
         if start > end:
-            raise 'start time could not be greater than end time'
+            raise TimeSliceException('start time could not be greater than end time')
 
         self.start = start
         self.end = end
@@ -79,19 +82,19 @@ class TimeSlice:
 
     def __gt__( self, x ):
         if not ( isinstance( x, TimeSlice ) ):
-            raise 'Invalid operand type. Expected TimeSlice'
+            raise TimeSliceException('Invalid operand type. Expected TimeSlice')
 
         return self.duration() > x.duration()
 
     def __le__( self, x ):
         if not ( isinstance( x, TimeSlice ) ):
-            raise 'Invalid operand type. Expected TimeSlice'
+            raise TimeSliceException('Invalid operand type. Expected TimeSlice')
 
         return self.duration() <= x.duration()
 
     def __lt__( self, x ):
         if not ( isinstance( x, TimeSlice ) ):
-            raise 'Invalid operand type. Expected TimeSlice'
+            raise TimeSliceException('Invalid operand type. Expected TimeSlice')
 
         return self.duration() < x.duration()
 
@@ -132,17 +135,18 @@ class TimeSlice:
         start = max( [ s1, s2 ] )
         end   = min( [ e1, e2 ] )
 
+        # Intersection of a point and a point is a point!
         if start == end:
             return None
 
         return TimeSlice( start, end )
 
     def __repr__( self ):
-        return '<TimeSlice intance ' + str( ( self.start, self.end ) ) + ' >'
+        return '<TimeSlice instance ' + str( ( self.start, self.end ) ) + ' >'
 
     def difference( self, timeSlice, absolute = False ):
         if not isinstance( timeSlice, TimeSlice ):
-            raise 'Invalid argument type. Expected TimeSlice'
+            raise TimeSliceException('Invalid argument type. Expected TimeSlice')
 
         if ( not absolute ) and ( timeSlice.start <= self.start and timeSlice.end >= self.end ):
             return TimeSet()
@@ -204,7 +208,7 @@ class TimeSlice:
             return self.duration() + arg
 
         if not isinstance( arg, TimeSlice ):
-            raise 'Invalid argument type. Expected TimeSlice'
+            raise TimeSliceException('Invalid argument type. Expected TimeSlice')
 
         intersection = self.intersect( arg ) 
 
@@ -229,7 +233,7 @@ class TimeSet:
         self.slices = []
         for element in list:
             if not isinstance( element, TimeSlice ):
-                raise 'Invalid type. Expected TimeSlice instance'
+                raise TimeSliceException('Invalid type. Expected TimeSlice instance')
 
             self.append( element )
 
@@ -332,7 +336,7 @@ class TimeSet:
 
             return TimeSet( intersections )
 
-        raise 'Invalid argument type. Expected TimeSlice or TimeSet'
+        raise TimeSliceException('Invalid argument type. Expected TimeSlice or TimeSet')
 
 
     def differenceSlice( self, arg ):
@@ -373,7 +377,7 @@ class TimeSet:
         if isinstance( arg, TimeSlice ):
             return self.differenceSlice( arg )
 
-        raise 'Invalid argument type. Expected TimeSlice or TimeSet'
+        raise TimeSliceException('Invalid argument type. Expected TimeSlice or TimeSet')
         
 
     def intersect( self, arg ):
@@ -388,7 +392,7 @@ class TimeSet:
         if isinstance( arg, TimeSlice ):
             return self.intersectSlice( arg )
 
-        raise 'Invalid argument type. Expected TimeSlice or TimeSet'
+        raise TimeSliceException('Invalid argument type. Expected TimeSlice or TimeSet')
 
     
     def addSlice( self, arg ):
@@ -429,7 +433,7 @@ class TimeSet:
         if isinstance( arg, TimeSlice ):
             return self.addSlice( arg )
 
-        raise 'Invalid argument type. Expected TimeSlice or TimeSet'
+        raise TimeSliceException('Invalid argument type. Expected TimeSlice or TimeSet')
         
 
 
