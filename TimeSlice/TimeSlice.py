@@ -347,7 +347,7 @@ class TimeSet:
         while i < len( newTimeSet.slices ):
             slice = newTimeSet[ i ]
             
-            intersection = slice.intersect( arg )
+            intersection = slice.intersect( arg ) if slice != arg else slice
             
             if intersection:
                 newTimeSet.slices.remove( slice )
