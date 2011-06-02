@@ -435,7 +435,8 @@ class TimeSet:
 
         raise TimeSliceException('Invalid argument type. Expected TimeSlice or TimeSet')
         
-
+    def __len__( self ):
+        return len(self.slices)
 
     def __repr__( self ):
         return "[" + ",\n".join( [ str( x ) for x in self ] ) + "]"
