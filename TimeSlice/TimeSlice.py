@@ -104,6 +104,8 @@ class TimeSlice:
 
         return True
 
+    def __hash__( self ):
+        return hash(self.start) ^ hash(self.end)
 
     def timedelta( self ):
         return self.end - self.start
